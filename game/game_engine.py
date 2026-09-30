@@ -72,7 +72,7 @@ class GameEngine:
 
             if elapsed >= self.match_duration:
                 self.sudden_death = True
-                self.game_state = "SUDDEN_DEATH"
+                self.game_state = "PLAYING"
 
         # Task 2 + Task 4:
         # Dynamic computer difficulty.
