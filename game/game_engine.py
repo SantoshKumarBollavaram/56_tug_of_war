@@ -28,21 +28,16 @@ class GameEngine:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
                 self.reset()
             return
-        #BUG SYMPTOM:
-        # Rapidly alternating between 'A' and 'D' causes the rope to suddenly
-        # stop responding. The Computer easily pulls the rope to its side and wins while the player tries hard to pull the rope to its side.
 
+        # Task 1 fix:
+        # Allow A and D to alternate rapidly.
+        # Ignore repeated KEYDOWN events for the same key.
         if event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_a, pygame.K_d):
-                if not self.is_pull_locked:
-                    if event.key != self.last_key:
-                        self.rope.pull_left(1.0)
-                        self.last_key = event.key
-                        self.is_pull_locked = True
-        elif event.type == pygame.KEYUP:
-            if event.key == self.last_key:
-                self.is_pull_locked = False
-        
+                if event.key != self.last_key:
+                    self.rope.pull_left(1.0)
+                    self.last_key = event.key
+
     def update(self):
         if self.game_state != "PLAYING":
             return
@@ -69,7 +64,12 @@ class GameEngine:
     def render(self, screen):
         screen.fill((30, 32, 36))
 
-        mud_rect = pygame.Rect(self.width // 2 - 120, self.height // 2 - 80, 240, 160)
+        mud_rect = pygame.Rect(
+            self.width // 2 - 120,
+            self.height // 2 - 80,
+            240,
+            160
+        )
         pygame.draw.rect(screen, (45, 38, 30), mud_rect, border_radius=12)
 
         self.rope.render(screen)
@@ -77,9 +77,14 @@ class GameEngine:
         self.computer.render(screen)
 
         inst_surf = self.font_small.render(
-            "Alternate [A] and [D] keys rapidly to pull!", True, (210, 210, 210)
+            "Alternate [A] and [D] keys rapidly to pull!",
+            True,
+            (210, 210, 210)
         )
-        screen.blit(inst_surf, (self.width // 2 - inst_surf.get_width() // 2, 40))
+        screen.blit(
+            inst_surf,
+            (self.width // 2 - inst_surf.get_width() // 2, 40)
+        )
 
         if self.game_state == "GAME_OVER":
             overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
@@ -87,17 +92,29 @@ class GameEngine:
             screen.blit(overlay, (0, 0))
 
             win_text = f"{self.winner} WINS!"
-            color = (80, 220, 80) if self.winner == "PLAYER" else (240, 80, 80)
+            color = (
+                (80, 220, 80)
+                if self.winner == "PLAYER"
+                else (240, 80, 80)
+            )
             text_surf = self.font_big.render(win_text, True, color)
             screen.blit(
                 text_surf,
-                (self.width // 2 - text_surf.get_width() // 2, self.height // 2 - 50)
+                (
+                    self.width // 2 - text_surf.get_width() // 2,
+                    self.height // 2 - 50
+                )
             )
 
             restart_surf = self.font_small.render(
-                "Press [R] to Play Again", True, (240, 240, 240)
+                "Press [R] to Play Again",
+                True,
+                (240, 240, 240)
             )
             screen.blit(
                 restart_surf,
-                (self.width // 2 - restart_surf.get_width() // 2, self.height // 2 + 10)
+                (
+                    self.width // 2 - restart_surf.get_width() // 2,
+                    self.height // 2 + 10
+                )
             )
