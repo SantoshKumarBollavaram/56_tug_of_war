@@ -43,8 +43,22 @@ class GameEngine:
             return
 
         now = pygame.time.get_ticks()
-        if now - self.last_computer_pull >= self.computer_pull_cooldown:
+
+        # Task 2: Dynamic computer difficulty surge
+        # The closer the flag gets to the player's goal,
+        # the more aggressively the computer pulls back.
+        distance_to_player_goal = (
+            self.rope.marker_x - self.rope.left_win_x
+        )
+
+        if distance_to_player_goal <= 120:
+            panic_cooldown = 90
+            computer_variance = random.uniform(1.2, 1.6)
+        else:
+            panic_cooldown = self.computer_pull_cooldown
             computer_variance = random.uniform(0.7, 1.2)
+
+        if now - self.last_computer_pull >= panic_cooldown:
             self.rope.pull_right(computer_variance)
             self.last_computer_pull = now
 
