@@ -136,6 +136,12 @@ class GameEngine:
         )
 
         self.rope.render(screen)
+
+        momentum = self.rope.get_momentum()
+
+        self.player.set_momentum(momentum, -1)
+        self.computer.set_momentum(momentum, 1)
+
         self.player.render(screen)
         self.computer.render(screen)
 
